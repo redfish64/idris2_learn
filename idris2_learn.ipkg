@@ -1,0 +1,6 @@
+package idris2_learn
+
+depends = contrib
+--pkgs = contrib
+modules =  LearnParser
+

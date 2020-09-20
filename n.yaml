@@ -1,0 +1,11 @@
+# See README.md in this directory for more guidance xxx
+
+
+# Temporary type cast operators. These are needed to trace type-casts now since
+# Type's are not supported in the IR. Instead, we call down to these
+# specialized operators for each datatype.
+# TODO: remove when we have Type support in the IR
+- func: _cast_Byte(Tensor self, bool non_blocking=False) -> Tensor
+  use_c10_dispatcher: full
+  variants: function
+
