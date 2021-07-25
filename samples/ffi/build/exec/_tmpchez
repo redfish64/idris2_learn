@@ -1,4 +1,0 @@
-#!/bin/sh
-
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`dirname $0`/_tmpchez_app
-`dirname $0`/_tmpchez_app/_tmpchez.ss $*
