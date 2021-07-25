@@ -131,9 +131,9 @@ main =
           pure ()
       Right s => 
         do
-          let r = fst $ lex myMap s
-          let r2 = r
+          let r = lex myMap s
+          let r2 = fst r
           let r3 = map tok r2
-          putStrLn $ show r3
+          putStrLn $ show r
           pure ())
        

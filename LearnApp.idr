@@ -19,15 +19,15 @@ wrapHelloCount =
                           helloCount
                           helloCount)
 
+-- run2 : App [] a -> IO a
+-- run2 x = run x
+
 runHello : IO ()
 runHello = run hello                          
                                                                               
 runHello2 : IO ()
 runHello2 = run wrapHelloCount                  
                                                                               
-hello : Console e => App e ()
-hello = putStrLn " Hello , App world !"
-
 
 data Access = LoggedOut | LoggedIn
 data Store : Access -> Type

@@ -1,6 +1,9 @@
 package idris2_learn
 
 depends = contrib
---pkgs = contrib
-modules =  LearnParser
+       --, elab-util, lens
 
+--pkgs = contrib
+modules = LearnVect
+main = LearnVect
+executable = lv

@@ -18,7 +18,7 @@ Foldable IArray where
 
 writeIndexes : (1 _ : LinArray Int) -> LinArray Int
 writeIndexes arr = 
-  let (asize # arr1) = msize arr
+  let (asize # arr1) : Res Int (const (LinArray Int)) = msize arr
   -- let asize = size arr 
   --     arr1 = arr -- co: doesn't work, arr becomes "0". I'm guessing the idea here is that you aren't allowed to
   -- update the array after reading it (including the size). That's why it takes it away

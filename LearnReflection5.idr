@@ -196,9 +196,9 @@ countArgs (IPi _ _ _ _ _ retTy) = countArgs retTy
 countArgs _ = 0
 
 public export
-genEq : Name -> Elab TTImp --Elab (t -> t -> Bool)
+genEq : {t : _} -> Name -> Elab (t -> t -> Bool)
 genEq typeName = do
-  let pos : FC = MkFC "generated code" (0,0) (0,0)
+  let pos : FC = MkFC (Virtual Interactive) (0,0) (0,0)
   [(n, _)] <- getType typeName
       | _ => fail "Ambiguous name"
   constrs <- getCons n
@@ -223,25 +223,22 @@ genEq typeName = do
   let allClauses = clauses ++ [finalClause]
       caseExpr = ICase pos `(MkPair x y) (Implicit pos True) allClauses
       result = `(\x, y => ~(caseExpr))
-  pure result
-  --check result
+  check result
 
 notIt : (t -> t -> Bool) -> t -> t -> Bool
 notIt f x y = not $ f x y
 
---www : Name -> Elab ()
-www : Name -> Elab (List Decl)
-www nx = let pos = MkFC "generated code" (0,0) (0,0)
+impIntr : Name -> TTImp -> Elab ()
+impIntr nx genEq = let pos = MkFC "generated code" (0,0) (0,0)
          in  
             do
                    --first create a function for eq
                    --eqFn <- genSym "eqfn"
-                   let eqFn = (UN "fooey") --genSym "fn"
-                   genEq <- genEq nx
-                   let iclaim = IClaim pos MW Public []
-                                       (MkTy pos eqFn `(~(IVar pos nx) -> ~(IVar pos nx) -> Bool))
-                   let idef = IDef pos eqFn [PatClause pos (IVar pos eqFn) genEq]
-                   declare [iclaim,idef]
+                   --let eqFn = (UN "fooey") --genSym "fn"
+                   -- let iclaim = IClaim pos MW Public []
+                   --                     (MkTy pos eqFn `(~(IVar pos nx) -> ~(IVar pos nx) -> Bool))
+                   -- let idef = IDef pos eqFn [PatClause pos (IVar pos eqFn) genEq]
+                   -- declare [iclaim,idef]
                   
                    --now create a function that has "hint" turned on, and returns an Eq
                    --this will implement the interface 
@@ -249,30 +246,30 @@ www nx = let pos = MkFC "generated code" (0,0) (0,0)
                    let cnstrVar = IVar EmptyFC cnstrName
                    
                     
-                   declare `[%hint
-                             funcName : Eq ~(IVar pos nx)
-                             funcName = ~(IVar pos cnstrName) ~(IVar pos eqFn) (notIt ~(IVar pos eqFn))
-                            ]
-                   
-                   pure `[%hint
-                          funcName : Eq ~(IVar pos nx)
-                          funcName = ~(IVar pos cnstrName) ~(IVar pos eqFn) (not ~(IVar pos eqFn))
-                         ]
-                   
-                   -- pure `[funcName : ~(IVar pos nx) -> ~(IVar pos nx) -> Bool
-                   --        funcName = ~(genEq)]
-                   -- declare `[funcName : ~(IVar pos nx) -> ~(IVar pos nx) -> Bool
-                   --           funcName = ~(genEq)]
-                             -- (notIt ~(genEq `{{Funky}}))]
-                   -- pure ()
+                   -- eqFn <- genSym (show nx ++ "EqImp")
+                   eqFn <- pure (UN (show nx ++ "EqImp"))
+                   logMsg "" 0 ("Name: " ++ show eqFn)
+                   let iclaim = IClaim pos MW Private [Hint True]
+                                       (MkTy pos eqFn `(Eq ~(IVar pos nx)))
+                   let idef = IDef pos eqFn [PatClause pos (IVar pos eqFn) `(let eqImp = ~(genEq) in ~(IVar pos cnstrName) eqImp (notIt eqImp))]
+                   declare [iclaim,idef]
+                   pure ()
 
+deriveEq : Name -> Elab ()
+deriveEq nx = 
+  do
+    genEqTT <- genEq nx
+    impIntr nx genEqTT
+                                                         
 data Flippy = Dolphin | Shark
 
-www' : List Decl
-www' = %runElab (www `{{Flippy}})
+%runElab (deriveEq `{{Flippy}})
 
-testwww : Bool
-testwww = Dolphin == Shark
+-- data XXX : Type where
+--   MkXXX : {a : Int} -> (b : Int) -> XXX
+
+
+-- %runElab deriveEq `{{XXX}}
 
 --[
 -- *** this is the type of whatever is next (in this case, a functon) ***

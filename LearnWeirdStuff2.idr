@@ -22,3 +22,4 @@ testfoo6 = foo6 6
 
 testfoo6' : Int
 testfoo6' = foo6 7 8
+

@@ -300,3 +300,33 @@ foo52 x = useX x
   --   putStrLn "Bonzai!"
 
   
+v : (0 x : Nat) -> Nat
+v _ = Z
+
+v2 : (0 x : Nat) -> Nat
+v2 x = v x
+
+v2' : (0 x : Nat) -> Nat
+v2' x = v (x+1)
+
+v2'' : (0 x : Nat) -> Nat
+v2'' x = let 0 xp = (x+1) --note "let 0" here
+         in v xp
+         
+w : (1 x : Nat) -> Nat
+w x = x
+
+w2'' : (1 x : Nat) -> Nat
+w2'' x = let 1 xp = S x  
+         in w xp
+         
+w2''' : (1 x : Nat) -> Nat
+w2''' x = let xp = S x  --let 1 is not needed, though
+         in w xp
+         
+-- w2 : (1 x : Nat) -> Nat
+-- w2 x = w x
+
+-- w2' : (1 x : Nat) -> Nat
+-- w2' x = w (S x)
+
