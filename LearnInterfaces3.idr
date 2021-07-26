@@ -69,7 +69,6 @@ foo5b = MkFoo5 $ (+1) . cast . length
 test8 : String -> Int
 test8 x = fee5 @{foo5b} x
 
-
 interface Foo6 x where
   fee6 : x -> Int
 
